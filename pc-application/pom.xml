@@ -20,8 +20,8 @@
                 <mysql.datasource.url>jdbc:mysql://localhost:3306/product?autoReconnect=true</mysql.datasource.url>
                 <mysql.datasource.username>product</mysql.datasource.username>
                 <mysql.datasource.password>product</mysql.datasource.password>
-                <mysql.pd.datasource.hibernate.dialect>org.hibernate.dialect.MySQL5Dialect
-                </mysql.pd.datasource.hibernate.dialect>
+                <mysql.datasource.hibernate.dialect>org.hibernate.dialect.MySQL5Dialect
+                </mysql.datasource.hibernate.dialect>
                 <db.connection-properties/>
                 <db.user>product</db.user>
                 <db.password>product</db.password>
@@ -41,6 +41,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
             <artifactId>log4j</artifactId>
@@ -90,6 +94,15 @@
             <artifactId>spring-boot</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
     <!--<build>
         <plugins>

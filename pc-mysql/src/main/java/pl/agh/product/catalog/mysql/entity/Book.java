@@ -21,7 +21,7 @@ public class Book {
     @Getter
     @Setter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; //todo mm hidden for json request
 
     @NotNull
     @Getter
