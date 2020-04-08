@@ -3,7 +3,6 @@ package pl.agh.product.catalog.mysql.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,7 +36,7 @@ public class Book {
 
     @Getter
     @Setter
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
