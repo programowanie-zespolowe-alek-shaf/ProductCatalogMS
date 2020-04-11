@@ -13,10 +13,11 @@ import pl.agh.product.catalog.application.dto.BookRequestDTO;
 import pl.agh.product.catalog.application.service.BookService;
 import pl.agh.product.catalog.application.service.ValidationService;
 import pl.agh.product.catalog.common.exception.CustomException;
+import pl.agh.product.catalog.common.response.ListResponse;
 import pl.agh.product.catalog.mysql.entity.Book;
+import pl.agh.product.catalog.mysql.entity.Category;
 
 import java.net.URI;
-import java.util.Set;
 
 import static pl.agh.product.catalog.common.util.ResponseFormat.APPLICATION_JSON;
 
@@ -84,13 +85,16 @@ public class BookController {
         }
     }
 
-    @RequestMapping(value = "/findByPhrase", method = RequestMethod.GET, produces = {APPLICATION_JSON})
-    public ResponseEntity findBooksByPhrase(@RequestParam String... phrases) {
-        Set<Book> books = bookService.findBooksByPhrase(phrases);
+    @RequestMapping(method = RequestMethod.GET, produces = {APPLICATION_JSON})
+    public ResponseEntity findBooks(@RequestParam int limit,
+                                    @RequestParam int offset,
+                                    @RequestParam(required = false) Category category,
+                                    @RequestParam(required = false) String... phrases) {
+        ListResponse books = bookService.findBooks(limit, offset, category, phrases);
         return ResponseEntity.ok(books);
     }
 
-    @RequestMapping(value = "{id}/uploadImage", method = RequestMethod.PUT, produces = {APPLICATION_JSON})
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH, produces = {APPLICATION_JSON})
     public ResponseEntity updateBookImageUrl(@PathVariable("id") Long id, @RequestParam String photoUrl) {
         Book book = bookService.updateBookPhotoUrl(id, photoUrl);
         if (book == null) {
@@ -99,7 +103,4 @@ public class BookController {
             return ResponseEntity.ok(book);
         }
     }
-
-    //todo findAll
-    //todo findByCategory
 }

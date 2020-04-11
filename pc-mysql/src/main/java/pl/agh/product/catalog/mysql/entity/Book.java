@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @Entity
 @Table(name = "book", schema = "product")
-public class Book {
+public class Book implements Comparable<Book> {
     @Id
     @Getter
     @Setter
@@ -70,4 +70,9 @@ public class Book {
     @Setter
     @Column(name = "price")
     private Float price;
+
+    @Override
+    public int compareTo(Book o) {
+        return this.id.compareTo(o.getId());
+    }
 }

@@ -5,6 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import pl.agh.product.catalog.mysql.entity.Book;
+import pl.agh.product.catalog.mysql.entity.Category;
 
 import java.util.List;
 import java.util.Set;
@@ -17,5 +18,7 @@ public interface BookRepository extends CrudRepository<Book, Long> {
     Set<Book> findAllByTitleOrAuthorIsLikeIgnoreCase(String phrase);
 
     List<Book> findAll();
+
+    List<Book> findAllByCategory(Category category);
 }
 
