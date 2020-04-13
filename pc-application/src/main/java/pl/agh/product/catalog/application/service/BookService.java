@@ -46,9 +46,12 @@ public class BookService {
         return book;
     }
 
-    public Book update(Long id, BookRequestDTO bookRequestDTO) {
+    public Book update(Long id, BookRequestDTO bookRequestDTO) throws BadRequestException {
         if (!bookRepository.existsById(id)) {
             return null;
+        }
+        if (!categoryRepository.existsById(bookRequestDTO.getCategory().getId())) {
+            throw new BadRequestException("category not found");
         }
         Book book = bookRequestDTO.toEntity();
         book.setId(id);
