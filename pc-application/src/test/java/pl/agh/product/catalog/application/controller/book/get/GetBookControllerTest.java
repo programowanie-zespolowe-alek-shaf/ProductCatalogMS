@@ -1,4 +1,4 @@
-package pl.agh.product.catalog.application.controller.book;
+package pl.agh.product.catalog.application.controller.book.get;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
