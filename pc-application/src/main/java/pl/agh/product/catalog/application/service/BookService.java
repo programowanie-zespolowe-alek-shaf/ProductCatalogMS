@@ -84,7 +84,7 @@ public class BookService {
             books = bookRepository.findAll();
         }
 
-        if(category != null) {
+        if (category != null) {
             books = books.stream()
                     .filter(b -> category.getId().equals(b.getCategory().getId()))
                     .collect(Collectors.toList());

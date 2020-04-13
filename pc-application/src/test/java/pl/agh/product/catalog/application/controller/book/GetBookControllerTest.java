@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -26,6 +27,27 @@ public class GetBookControllerTest {
     public void successTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/books/1"))
                 .andExpect(status().is(200))
-                .andExpect(jsonPath("a").value("b"));
+                .andExpect(jsonPath("id").value("1"))
+                .andExpect(jsonPath("title").value("Nineteen Eighty-Four"))
+                .andExpect(jsonPath("author").value("George Orwell"))
+                .andExpect(jsonPath("category.id").value("1"))
+                .andExpect(jsonPath("category.name").value("Novel"))
+                .andExpect(jsonPath("year").value("1949"))
+                .andExpect(jsonPath("photoUrl").value(nullValue()))
+                .andExpect(jsonPath("description").value(nullValue()))
+                .andExpect(jsonPath("available").value("true"))
+                .andExpect(jsonPath("price").value("21.37"));
+    }
+
+    @Test
+    public void notFoundTest() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/books/10"))
+                .andExpect(status().is(404));
+    }
+
+    @Test
+    public void invalidIdFormatTest() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/books/10ds"))
+                .andExpect(status().is(400));
     }
 }
