@@ -1,6 +1,5 @@
 package pl.agh.product.catalog.application.controller.book.update;
 
-import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pl.agh.product.catalog.application.dto.BookRequestDTO;
 import pl.agh.product.catalog.common.util.StringUtils;
@@ -18,7 +16,6 @@ import pl.agh.product.catalog.mysql.entity.Book;
 import pl.agh.product.catalog.mysql.entity.Category;
 import pl.agh.product.catalog.mysql.repository.BookRepository;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 import static junit.framework.TestCase.assertTrue;
@@ -103,10 +100,10 @@ public class UpdateBookControllerTest {
 
         String requestJson = StringUtils.mapObjectToStringJson(bookRequestDTO);
 
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put("/books/1").contentType(APPLICATION_JSON_UTF8)
+        mvc.perform(MockMvcRequestBuilders.put("/books/1").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
                 .andExpect(status().is(200))
-                .andExpect(jsonPath("id").isNumber())
+                .andExpect(jsonPath("id").value("1"))
                 .andExpect(jsonPath("title").value("A"))
                 .andExpect(jsonPath("author").value("A"))
                 .andExpect(jsonPath("category.id").value("1"))
@@ -115,13 +112,11 @@ public class UpdateBookControllerTest {
                 .andExpect(jsonPath("photoUrl").value(nullValue()))
                 .andExpect(jsonPath("description").value(nullValue()))
                 .andExpect(jsonPath("available").value("true"))
-                .andExpect(jsonPath("price").value("20.35"))
-                .andReturn();
+                .andExpect(jsonPath("price").value("20.35"));
 
-        Long bookId = getIdFromResponse(mvcResult);
-        Book book = bookRepository.findById(bookId).orElse(null);
+        Book book = bookRepository.findById(1L).orElse(null);
         assertNotNull(book);
-        assertEquals(book.getId(), bookId);
+        assertEquals(book.getId(), 1L, 0.01);
         assertEquals(book.getTitle(), "A");
         assertEquals(book.getAuthor(), "A");
         assertEquals(book.getCategory().getId(), 1L, 0.01);
@@ -219,11 +214,5 @@ public class UpdateBookControllerTest {
         mvc.perform(MockMvcRequestBuilders.put("/books/10").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
                 .andExpect(status().is(404));
-    }
-
-    private Long getIdFromResponse(MvcResult mvcResult) throws UnsupportedEncodingException {
-        String response = mvcResult.getResponse().getContentAsString();
-        Integer id = JsonPath.parse(response).read("id");
-        return id.longValue();
     }
 }
