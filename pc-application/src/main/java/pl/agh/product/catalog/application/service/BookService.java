@@ -39,7 +39,7 @@ public class BookService {
 
     public Book add(BookRequestDTO bookRequestDTO) throws CustomException {
         if (!categoryRepository.existsById(bookRequestDTO.getCategory().getId())) {
-            throw new BadRequestException("Category not found");
+            throw new BadRequestException("category not found");
         }
         Book book = bookRequestDTO.toEntity();
         book = bookRepository.save(book);

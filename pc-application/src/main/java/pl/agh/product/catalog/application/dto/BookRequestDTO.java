@@ -27,4 +27,8 @@ public class BookRequestDTO {
                 .price(price)
                 .build();
     }
+
+    public Float getPrice() {
+        return price != null ? (float) (Math.round(price * 100.0) / 100.0) : null;
+    }
 }
