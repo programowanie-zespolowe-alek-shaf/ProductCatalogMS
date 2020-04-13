@@ -6,8 +6,7 @@ public enum FieldName {
     AUTHOR("author"),
     CATEGORY("category"),
     PRICE("price"),
-    AVAILABLE("available"),
-    PHRASES("phrases");
+    AVAILABLE("available");
 
     private final String name;
 

@@ -42,8 +42,7 @@ public class BookService {
             throw new BadRequestException("category not found");
         }
         Book book = bookRequestDTO.toEntity();
-        book = bookRepository.save(book);
-        return book;
+        return bookRepository.save(book);
     }
 
     public Book update(Long id, BookRequestDTO bookRequestDTO) throws BadRequestException {

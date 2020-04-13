@@ -13,7 +13,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pl.agh.product.catalog.application.dto.BookRequestDTO;
-import pl.agh.product.catalog.common.util.StringUtils;
 import pl.agh.product.catalog.mysql.entity.Book;
 import pl.agh.product.catalog.mysql.entity.Category;
 import pl.agh.product.catalog.mysql.repository.BookRepository;
@@ -25,6 +24,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static pl.agh.product.catalog.application.config.TestUtils.getIdFromResponse;
+import static pl.agh.product.catalog.application.config.TestUtils.mapObjectToStringJson;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest()
@@ -49,7 +50,7 @@ public class DeleteBookControllerTest {
         bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
-        String requestJson = StringUtils.mapObjectToStringJson(bookRequestDTO);
+        String requestJson = mapObjectToStringJson(bookRequestDTO);
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("/books").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -72,11 +73,5 @@ public class DeleteBookControllerTest {
     public void notFoundTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders.delete("/books/10"))
                 .andExpect(status().is(404));
-    }
-
-    private Long getIdFromResponse(MvcResult mvcResult) throws UnsupportedEncodingException {
-        String response = mvcResult.getResponse().getContentAsString();
-        Integer id = JsonPath.parse(response).read("id");
-        return id.longValue();
     }
 }

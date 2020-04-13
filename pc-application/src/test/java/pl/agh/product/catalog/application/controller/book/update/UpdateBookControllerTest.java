@@ -11,7 +11,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pl.agh.product.catalog.application.dto.BookRequestDTO;
-import pl.agh.product.catalog.common.util.StringUtils;
 import pl.agh.product.catalog.mysql.entity.Book;
 import pl.agh.product.catalog.mysql.entity.Category;
 import pl.agh.product.catalog.mysql.repository.BookRepository;
@@ -25,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static pl.agh.product.catalog.application.config.TestUtils.mapObjectToStringJson;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest()
@@ -55,7 +55,7 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3f);
 
-        String requestJson = StringUtils.mapObjectToStringJson(bookRequestDTO);
+        String requestJson = mapObjectToStringJson(bookRequestDTO);
 
         mvc.perform(MockMvcRequestBuilders.put("/books/1").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -98,7 +98,7 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
 
-        String requestJson = StringUtils.mapObjectToStringJson(bookRequestDTO);
+        String requestJson = mapObjectToStringJson(bookRequestDTO);
 
         mvc.perform(MockMvcRequestBuilders.put("/books/1").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -139,7 +139,7 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
 
-        String requestJson = StringUtils.mapObjectToStringJson(bookRequestDTO);
+        String requestJson = mapObjectToStringJson(bookRequestDTO);
 
         mvc.perform(MockMvcRequestBuilders.put("/books/2").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -155,7 +155,7 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
         bookRequestDTO.setAvailable(true);
 
-        String requestJson = StringUtils.mapObjectToStringJson(bookRequestDTO);
+        String requestJson = mapObjectToStringJson(bookRequestDTO);
 
         mvc.perform(MockMvcRequestBuilders.put("/books/3").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -172,7 +172,7 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(-20.3464f);
 
-        String requestJson = StringUtils.mapObjectToStringJson(bookRequestDTO);
+        String requestJson = mapObjectToStringJson(bookRequestDTO);
 
         mvc.perform(MockMvcRequestBuilders.put("/books/1").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -189,7 +189,7 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
 
-        String requestJson = StringUtils.mapObjectToStringJson(bookRequestDTO);
+        String requestJson = mapObjectToStringJson(bookRequestDTO);
 
         mvc.perform(MockMvcRequestBuilders.put("/books/3").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -209,7 +209,7 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3f);
 
-        String requestJson = StringUtils.mapObjectToStringJson(bookRequestDTO);
+        String requestJson = mapObjectToStringJson(bookRequestDTO);
 
         mvc.perform(MockMvcRequestBuilders.put("/books/10").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))

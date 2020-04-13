@@ -19,11 +19,4 @@ public class StringUtils {
     public static boolean isBlank(String s) {
         return s == null || s.trim().isEmpty();
     }
-
-    public static String mapObjectToStringJson(Object o) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        return ow.writeValueAsString(o);
-    }
 }
