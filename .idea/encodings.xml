@@ -3,7 +3,10 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pc-application" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pc-application/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pc-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pc-common/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pc-mysql" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pc-mysql/src/main/java" charset="UTF-8" />
   </component>
 </project>
