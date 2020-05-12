@@ -19,6 +19,10 @@ CREATE TABLE book (
   photo_url   VARCHAR(255),
   description VARCHAR(255),
   available   TINYINT(1) NOT NULL DEFAULT '1',
+  recommended TINYINT(1) NOT NULL DEFAULT '0',
   price       DECIMAL(10, 2) NOT NULL,
+  num_pages   INT,
+  cover_type  VARCHAR(255) NOT NULL,
+  date_added  DATE NOT NULL,
   FOREIGN KEY (category_id) REFERENCES category(id)
 );

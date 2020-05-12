@@ -17,6 +17,8 @@ public class ValidationService {
         validateNotNull(FieldName.CATEGORY, bookRequestDTO.getCategory());
         validateNotNull(FieldName.PRICE, bookRequestDTO.getPrice());
         validateNotNull(FieldName.AVAILABLE, bookRequestDTO.getAvailable());
+        validateNotNull(FieldName.RECOMMENDED, bookRequestDTO.getRecommended());
+        validateNotNull(FieldName.COVER_TYPE, bookRequestDTO.getCoverType());
         validateGreaterThanZero(FieldName.PRICE, bookRequestDTO.getPrice());
     }
 }

@@ -54,6 +54,9 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setDescription("desc");
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3f);
+        bookRequestDTO.setRecommended(false);
+        bookRequestDTO.setNumPages(321);
+        bookRequestDTO.setCoverType(Book.CoverType.PAPERBACK);
 
         String requestJson = mapObjectToStringJson(bookRequestDTO);
 
@@ -69,7 +72,9 @@ public class UpdateBookControllerTest {
                 .andExpect(jsonPath("photoUrl").value("url"))
                 .andExpect(jsonPath("description").value("desc"))
                 .andExpect(jsonPath("available").value("true"))
-                .andExpect(jsonPath("price").value("20.3"));
+                .andExpect(jsonPath("price").value("20.3"))
+                .andExpect(jsonPath("numPages").value("321"))
+                .andExpect(jsonPath("coverType").value("PAPERBACK"));
 
         Book book = bookRepository.findById(1L).orElse(null);
         assertNotNull(book);
@@ -83,6 +88,8 @@ public class UpdateBookControllerTest {
         assertEquals(book.getDescription(), "desc");
         assertTrue(book.getAvailable());
         assertEquals(book.getPrice(), 20.3f, 0.01);
+        assertEquals(book.getNumPages(), 321, 0.01);
+        assertEquals(book.getCoverType(), Book.CoverType.PAPERBACK);
 
         bookRepository.save(bookBefore);
     }
@@ -97,6 +104,7 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
+        bookRequestDTO.setRecommended(false);
 
         String requestJson = mapObjectToStringJson(bookRequestDTO);
 
@@ -138,6 +146,7 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
+        bookRequestDTO.setRecommended(false);
 
         String requestJson = mapObjectToStringJson(bookRequestDTO);
 
@@ -154,6 +163,7 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setAuthor("A");
         bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
         bookRequestDTO.setAvailable(true);
+        bookRequestDTO.setRecommended(false);
 
         String requestJson = mapObjectToStringJson(bookRequestDTO);
 
@@ -171,6 +181,7 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(-20.3464f);
+        bookRequestDTO.setRecommended(false);
 
         String requestJson = mapObjectToStringJson(bookRequestDTO);
 
@@ -188,6 +199,7 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setCategory(new Category(7L, "someName")); //only id is important
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
+        bookRequestDTO.setRecommended(false);
 
         String requestJson = mapObjectToStringJson(bookRequestDTO);
 
@@ -208,11 +220,29 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setDescription("desc");
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3f);
+        bookRequestDTO.setRecommended(false);
 
         String requestJson = mapObjectToStringJson(bookRequestDTO);
 
         mvc.perform(MockMvcRequestBuilders.put("/books/10").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
                 .andExpect(status().is(404));
+    }
+
+    @Test
+    public void recommendedNotProvidedFailedTest() throws Exception {
+        BookRequestDTO bookRequestDTO = new BookRequestDTO();
+        bookRequestDTO.setTitle("A");
+        bookRequestDTO.setAuthor("A");
+        bookRequestDTO.setCategory(new Category(7L, "someName")); //only id is important
+        bookRequestDTO.setAvailable(true);
+        bookRequestDTO.setPrice(20.3464f);
+
+        String requestJson = mapObjectToStringJson(bookRequestDTO);
+
+        mvc.perform(MockMvcRequestBuilders.post("/books").contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson))
+                .andExpect(status().is(400))
+                .andExpect(jsonPath("error").value("recommended cannot be null"));
     }
 }

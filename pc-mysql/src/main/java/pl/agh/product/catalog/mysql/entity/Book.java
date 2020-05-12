@@ -6,15 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 @Builder
 @NoArgsConstructor
@@ -68,11 +62,37 @@ public class Book implements Comparable<Book> {
 
     @Getter
     @Setter
+    @NotNull
+    @Column(name = "recommended")
+    private Boolean recommended;
+
+    @Getter
+    @Setter
     @Column(name = "price")
     private Float price;
+
+    @Getter
+    @Setter
+    @Column(name = "num_pages")
+    private Integer numPages;
+
+    @Getter
+    @Setter
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "cover_type")
+    private CoverType coverType;
+
+    @NotNull
+    @Column(name = "date_added")
+    private LocalDate dateAdded;
 
     @Override
     public int compareTo(Book o) {
         return this.id.compareTo(o.getId());
+    }
+
+    public enum CoverType {
+        PAPERBACK, HARDCOVER
     }
 }

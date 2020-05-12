@@ -50,6 +50,7 @@ public class DeleteBookControllerTest {
         bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
+        bookRequestDTO.setRecommended(true);
         String requestJson = mapObjectToStringJson(bookRequestDTO);
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("/books").contentType(APPLICATION_JSON_UTF8)
