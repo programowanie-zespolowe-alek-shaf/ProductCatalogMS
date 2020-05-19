@@ -1,5 +1,6 @@
 package pl.agh.product.catalog.application.controller.book.delete;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,6 +40,9 @@ public class DeleteBookControllerTest {
     @Autowired
     private BookRepository bookRepository;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
@@ -51,7 +55,7 @@ public class DeleteBookControllerTest {
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
         bookRequestDTO.setRecommended(true);
-        String requestJson = mapObjectToStringJson(bookRequestDTO);
+        String requestJson = mapObjectToStringJson(bookRequestDTO, objectMapper);
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("/books").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))

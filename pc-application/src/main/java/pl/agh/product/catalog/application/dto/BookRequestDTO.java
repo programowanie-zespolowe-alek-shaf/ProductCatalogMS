@@ -21,9 +21,6 @@ public class BookRequestDTO {
     private Float price;
     private Integer numPages;
     private Book.CoverType coverType = Book.CoverType.PAPERBACK;
-    @NotNull
-    @FutureOrPresent
-    private LocalDate dateAdded = LocalDate.now();
 
     public Book toEntity() {
         return Book.builder()
@@ -38,7 +35,6 @@ public class BookRequestDTO {
                 .price(price)
                 .numPages(numPages)
                 .coverType(coverType)
-                .dateAdded(dateAdded)
                 .build();
     }
 
