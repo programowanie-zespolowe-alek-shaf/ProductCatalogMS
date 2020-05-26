@@ -1,4 +1,4 @@
-package pl.agh.order.management.config;
+package pl.agh.product.catalog.application.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
