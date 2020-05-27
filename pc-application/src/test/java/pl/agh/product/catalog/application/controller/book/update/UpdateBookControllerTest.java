@@ -1,5 +1,6 @@
 package pl.agh.product.catalog.application.controller.book.update;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import pl.agh.product.catalog.mysql.entity.Category;
 import pl.agh.product.catalog.mysql.repository.BookRepository;
 
 import java.nio.charset.Charset;
+import java.time.LocalDate;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.nullValue;
@@ -38,6 +40,9 @@ public class UpdateBookControllerTest {
     @Autowired
     private BookRepository bookRepository;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
@@ -54,8 +59,11 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setDescription("desc");
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3f);
+        bookRequestDTO.setRecommended(false);
+        bookRequestDTO.setNumPages(321);
+        bookRequestDTO.setCoverType(Book.CoverType.PAPERBACK);
 
-        String requestJson = mapObjectToStringJson(bookRequestDTO);
+        String requestJson = mapObjectToStringJson(bookRequestDTO, objectMapper);
 
         mvc.perform(MockMvcRequestBuilders.put("/books/1").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -69,7 +77,9 @@ public class UpdateBookControllerTest {
                 .andExpect(jsonPath("photoUrl").value("url"))
                 .andExpect(jsonPath("description").value("desc"))
                 .andExpect(jsonPath("available").value("true"))
-                .andExpect(jsonPath("price").value("20.3"));
+                .andExpect(jsonPath("price").value("20.3"))
+                .andExpect(jsonPath("numPages").value("321"))
+                .andExpect(jsonPath("coverType").value("PAPERBACK"));
 
         Book book = bookRepository.findById(1L).orElse(null);
         assertNotNull(book);
@@ -83,6 +93,8 @@ public class UpdateBookControllerTest {
         assertEquals(book.getDescription(), "desc");
         assertTrue(book.getAvailable());
         assertEquals(book.getPrice(), 20.3f, 0.01);
+        assertEquals(book.getNumPages(), 321, 0.01);
+        assertEquals(book.getCoverType(), Book.CoverType.PAPERBACK);
 
         bookRepository.save(bookBefore);
     }
@@ -97,8 +109,9 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
+        bookRequestDTO.setRecommended(false);
 
-        String requestJson = mapObjectToStringJson(bookRequestDTO);
+        String requestJson = mapObjectToStringJson(bookRequestDTO, objectMapper);
 
         mvc.perform(MockMvcRequestBuilders.put("/books/1").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -112,6 +125,7 @@ public class UpdateBookControllerTest {
                 .andExpect(jsonPath("photoUrl").value(nullValue()))
                 .andExpect(jsonPath("description").value(nullValue()))
                 .andExpect(jsonPath("available").value("true"))
+                .andExpect(jsonPath("dateAdded").value("2020-05-01"))
                 .andExpect(jsonPath("price").value("20.35"));
 
         Book book = bookRepository.findById(1L).orElse(null);
@@ -126,6 +140,7 @@ public class UpdateBookControllerTest {
         assertNull(book.getDescription());
         assertTrue(book.getAvailable());
         assertEquals(book.getPrice(), 20.35f, 0.01);
+        assertEquals(book.getDateAdded(), LocalDate.of(2020, 5, 1));
 
         bookRepository.save(bookBefore);
     }
@@ -138,8 +153,9 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
+        bookRequestDTO.setRecommended(false);
 
-        String requestJson = mapObjectToStringJson(bookRequestDTO);
+        String requestJson = mapObjectToStringJson(bookRequestDTO, objectMapper);
 
         mvc.perform(MockMvcRequestBuilders.put("/books/2").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -154,8 +170,9 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setAuthor("A");
         bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
         bookRequestDTO.setAvailable(true);
+        bookRequestDTO.setRecommended(false);
 
-        String requestJson = mapObjectToStringJson(bookRequestDTO);
+        String requestJson = mapObjectToStringJson(bookRequestDTO, objectMapper);
 
         mvc.perform(MockMvcRequestBuilders.put("/books/3").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -171,8 +188,9 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(-20.3464f);
+        bookRequestDTO.setRecommended(false);
 
-        String requestJson = mapObjectToStringJson(bookRequestDTO);
+        String requestJson = mapObjectToStringJson(bookRequestDTO, objectMapper);
 
         mvc.perform(MockMvcRequestBuilders.put("/books/1").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -188,8 +206,9 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setCategory(new Category(7L, "someName")); //only id is important
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
+        bookRequestDTO.setRecommended(false);
 
-        String requestJson = mapObjectToStringJson(bookRequestDTO);
+        String requestJson = mapObjectToStringJson(bookRequestDTO, objectMapper);
 
         mvc.perform(MockMvcRequestBuilders.put("/books/3").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -208,11 +227,29 @@ public class UpdateBookControllerTest {
         bookRequestDTO.setDescription("desc");
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3f);
+        bookRequestDTO.setRecommended(false);
 
-        String requestJson = mapObjectToStringJson(bookRequestDTO);
+        String requestJson = mapObjectToStringJson(bookRequestDTO, objectMapper);
 
         mvc.perform(MockMvcRequestBuilders.put("/books/10").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
                 .andExpect(status().is(404));
+    }
+
+    @Test
+    public void recommendedNotProvidedFailedTest() throws Exception {
+        BookRequestDTO bookRequestDTO = new BookRequestDTO();
+        bookRequestDTO.setTitle("A");
+        bookRequestDTO.setAuthor("A");
+        bookRequestDTO.setCategory(new Category(7L, "someName")); //only id is important
+        bookRequestDTO.setAvailable(true);
+        bookRequestDTO.setPrice(20.3464f);
+
+        String requestJson = mapObjectToStringJson(bookRequestDTO, objectMapper);
+
+        mvc.perform(MockMvcRequestBuilders.post("/books").contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson))
+                .andExpect(status().is(400))
+                .andExpect(jsonPath("error").value("recommended cannot be null"));
     }
 }

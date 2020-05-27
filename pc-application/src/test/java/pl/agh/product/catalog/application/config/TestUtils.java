@@ -17,8 +17,7 @@ public class TestUtils {
         return id.longValue();
     }
 
-    public static String mapObjectToStringJson(Object o) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
+    public static String mapObjectToStringJson(Object o, ObjectMapper mapper) throws JsonProcessingException {
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         return ow.writeValueAsString(o);

@@ -13,6 +13,7 @@ import pl.agh.product.catalog.mysql.entity.Category;
 import pl.agh.product.catalog.mysql.repository.BookRepository;
 import pl.agh.product.catalog.mysql.repository.CategoryRepository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -42,18 +43,22 @@ public class BookService {
             throw new BadRequestException("category not found");
         }
         Book book = bookRequestDTO.toEntity();
+        book.setDateAdded(LocalDate.now());
         return bookRepository.save(book);
     }
 
     public Book update(Long id, BookRequestDTO bookRequestDTO) throws BadRequestException {
-        if (!bookRepository.existsById(id)) {
+        Optional<Book> optBook = bookRepository.findById(id);
+        if (!optBook.isPresent()) {
             return null;
         }
         if (!categoryRepository.existsById(bookRequestDTO.getCategory().getId())) {
             throw new BadRequestException("category not found");
         }
+        Book existingBook = optBook.get();
         Book book = bookRequestDTO.toEntity();
         book.setId(id);
+        book.setDateAdded(existingBook.getDateAdded());
         book = bookRepository.save(book);
         return book;
     }

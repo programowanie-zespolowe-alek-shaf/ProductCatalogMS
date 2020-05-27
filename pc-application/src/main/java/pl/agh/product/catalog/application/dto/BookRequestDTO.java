@@ -4,6 +4,10 @@ import lombok.Data;
 import pl.agh.product.catalog.mysql.entity.Book;
 import pl.agh.product.catalog.mysql.entity.Category;
 
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+
 @Data
 public class BookRequestDTO {
     private String title;
@@ -13,7 +17,10 @@ public class BookRequestDTO {
     private String photoUrl;
     private String description;
     private Boolean available;
+    private Boolean recommended;
     private Float price;
+    private Integer numPages;
+    private Book.CoverType coverType = Book.CoverType.PAPERBACK;
 
     public Book toEntity() {
         return Book.builder()
@@ -24,7 +31,10 @@ public class BookRequestDTO {
                 .photoUrl(photoUrl)
                 .description(description)
                 .available(available)
+                .recommended(recommended)
                 .price(price)
+                .numPages(numPages)
+                .coverType(coverType)
                 .build();
     }
 
