@@ -2,11 +2,8 @@ package pl.agh.product.catalog.application.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.agh.product.catalog.application.service.CategoryService;
 import pl.agh.product.catalog.common.exception.CustomException;
@@ -30,6 +27,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(method = RequestMethod.POST, produces = {APPLICATION_JSON})
     public ResponseEntity addCategory(@RequestParam String name) throws CustomException {
         Category createdCategory = categoryService.add(name);
@@ -62,6 +60,7 @@ public class CategoryController {
         }
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE, produces = {APPLICATION_JSON})
     public ResponseEntity deleteCategory(@PathVariable Long id) {
         Category deletedCategory = categoryService.delete(id);
