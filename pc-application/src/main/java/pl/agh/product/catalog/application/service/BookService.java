@@ -1,6 +1,7 @@
 package pl.agh.product.catalog.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pl.agh.product.catalog.application.dto.BookRequestDTO;
 import pl.agh.product.catalog.common.exception.BadRequestException;
@@ -14,12 +15,7 @@ import pl.agh.product.catalog.mysql.repository.BookRepository;
 import pl.agh.product.catalog.mysql.repository.CategoryRepository;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,12 +79,23 @@ public class BookService {
         return book;
     }
 
-    public ListResponse findBooks(int limit, int offset, Category category, String... phrases) {
+    public ListResponse findBooks(int limit, int offset, Category category, Boolean recommended, String sort, String... phrases) {
         List<Book> books;
         if (phrases != null && phrases.length > 0) {
             books = findBooksByPhrases(phrases);
         } else {
-            books = bookRepository.findAll();
+            if (sort != null) {
+                String[] sort_key_and_direction = sort.split(";");
+                Sort sort_obj = null;
+                if (sort_key_and_direction.length == 2 && sort_key_and_direction[1].equals("desc")) {
+                    sort_obj = Sort.by(Sort.Direction.DESC, sort_key_and_direction[0]);
+                } else {
+                    sort_obj = Sort.by(Sort.Direction.ASC, sort_key_and_direction[0]);
+                }
+                books = (List<Book>)bookRepository.findAll(sort_obj);
+            } else {
+                books = bookRepository.findAll();
+            }
         }
 
         if (category != null) {
@@ -96,6 +103,12 @@ public class BookService {
                     .filter(b -> category.getId().equals(b.getCategory().getId()))
                     .collect(Collectors.toList());
         }
+        if (recommended != null) {
+            books = books.stream()
+                    .filter(b -> b.getRecommended().equals(recommended))
+                    .collect(Collectors.toList());
+        }
+
         int count = books.size();
         books = ListUtil.clampedSublist(books, limit, offset);
         return new ListResponse(books, count);

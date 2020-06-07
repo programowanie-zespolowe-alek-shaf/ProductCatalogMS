@@ -89,8 +89,10 @@ public class BookController {
     public ResponseEntity findBooks(@RequestParam int limit,
                                     @RequestParam int offset,
                                     @RequestParam(required = false) Category category,
+                                    @RequestParam(required = false) Boolean recommended,
+                                    @RequestParam(required = false) String sort,
                                     @RequestParam(required = false) String... phrases) {
-        ListResponse books = bookService.findBooks(limit, offset, category, phrases);
+        ListResponse books = bookService.findBooks(limit, offset, category, recommended, sort, phrases);
         return ResponseEntity.ok(books);
     }
 
