@@ -1,13 +1,13 @@
 package pl.agh.product.catalog.application.controller.book.delete;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,7 +18,6 @@ import pl.agh.product.catalog.mysql.entity.Book;
 import pl.agh.product.catalog.mysql.entity.Category;
 import pl.agh.product.catalog.mysql.repository.BookRepository;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 import static org.junit.Assert.assertNotNull;
@@ -46,6 +45,7 @@ public class DeleteBookControllerTest {
     private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void createAndDeleteSuccessTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
@@ -74,6 +74,7 @@ public class DeleteBookControllerTest {
         assertNull(bookAfterDeleting);
     }
 
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void notFoundTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders.delete("/books/10"))

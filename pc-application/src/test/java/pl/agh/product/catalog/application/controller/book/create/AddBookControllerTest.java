@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,9 +23,7 @@ import java.time.LocalDate;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static pl.agh.product.catalog.application.config.TestUtils.getIdFromResponse;
@@ -48,6 +47,7 @@ public class AddBookControllerTest {
     private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void successAllArgsTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
@@ -105,6 +105,7 @@ public class AddBookControllerTest {
         bookRepository.delete(book);
     }
 
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void successMinArgsTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
@@ -155,7 +156,7 @@ public class AddBookControllerTest {
         bookRepository.delete(book);
     }
 
-
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void noTitleFailedTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
@@ -173,6 +174,7 @@ public class AddBookControllerTest {
                 .andExpect(jsonPath("error").value("title cannot be null"));
     }
 
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void noPriceFailedTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
@@ -190,6 +192,7 @@ public class AddBookControllerTest {
                 .andExpect(jsonPath("error").value("price cannot be null"));
     }
 
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void priceBelowZeroFailedTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
@@ -208,6 +211,7 @@ public class AddBookControllerTest {
                 .andExpect(jsonPath("error").value("price must be greater than zero"));
     }
 
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void categoryDoesNotExistFailedTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
@@ -226,6 +230,7 @@ public class AddBookControllerTest {
                 .andExpect(jsonPath("error").value("category not found"));
     }
 
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void recommendedNotProvidedFailedTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
