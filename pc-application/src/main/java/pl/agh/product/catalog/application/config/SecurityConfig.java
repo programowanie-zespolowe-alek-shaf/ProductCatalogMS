@@ -35,10 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**")
-                .and().ignoring().antMatchers(HttpMethod.GET, "/categories")
-                .and().ignoring().antMatchers(HttpMethod.GET, "/categories/{id}")
-                .and().ignoring().antMatchers(HttpMethod.GET, "/books")
-                .and().ignoring().antMatchers(HttpMethod.GET, "/books/{id}")
+                .and().ignoring().antMatchers(HttpMethod.GET, "/categories/**")
+                .and().ignoring().antMatchers(HttpMethod.GET, "/books/**")
         ;
     }
 }
