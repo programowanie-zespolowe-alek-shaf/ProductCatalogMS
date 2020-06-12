@@ -8,14 +8,14 @@ import pl.agh.product.catalog.mysql.entity.Category;
 public class BookRequestDTO {
     private String title;
     private String author;
-    private Category category;
+    private Integer categoryId;
     private Integer year;
     private String photoUrl;
     private String description;
     private Boolean available;
     private Float price;
 
-    public Book toEntity() {
+    public Book toEntity(Category category) {
         return Book.builder()
                 .title(title)
                 .author(author)
