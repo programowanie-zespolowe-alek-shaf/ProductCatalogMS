@@ -246,7 +246,7 @@ public class UpdateBookControllerTest {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(7L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(7);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
 
