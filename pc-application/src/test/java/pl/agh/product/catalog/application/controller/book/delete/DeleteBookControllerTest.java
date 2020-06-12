@@ -1,11 +1,13 @@
 package pl.agh.product.catalog.application.controller.book.delete;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,9 +38,13 @@ public class DeleteBookControllerTest {
     @Autowired
     private BookRepository bookRepository;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(), StandardCharsets.UTF_8);
 
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void createAndDeleteSuccessTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
@@ -47,7 +53,8 @@ public class DeleteBookControllerTest {
         bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
-        String requestJson = mapObjectToStringJson(bookRequestDTO);
+        bookRequestDTO.setRecommended(true);
+        String requestJson = mapObjectToStringJson(bookRequestDTO, objectMapper);
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("/books").contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
@@ -66,6 +73,7 @@ public class DeleteBookControllerTest {
         assertNull(bookAfterDeleting);
     }
 
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void notFoundTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders.delete("/books/10"))

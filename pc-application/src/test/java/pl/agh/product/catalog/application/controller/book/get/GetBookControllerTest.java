@@ -36,7 +36,10 @@ public class GetBookControllerTest {
                 .andExpect(jsonPath("photoUrl").value(nullValue()))
                 .andExpect(jsonPath("description").value(nullValue()))
                 .andExpect(jsonPath("available").value("true"))
-                .andExpect(jsonPath("price").value("21.37"));
+                .andExpect(jsonPath("price").value("21.37"))
+                .andExpect(jsonPath("recommended").value(true))
+                .andExpect(jsonPath("numPages").value("345"))
+                .andExpect(jsonPath("coverType").value("HARDCOVER"));
     }
 
     @Test
