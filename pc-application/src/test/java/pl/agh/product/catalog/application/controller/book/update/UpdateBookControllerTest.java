@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pl.agh.product.catalog.application.dto.BookRequestDTO;
 import pl.agh.product.catalog.mysql.entity.Book;
-import pl.agh.product.catalog.mysql.entity.Category;
 import pl.agh.product.catalog.mysql.repository.BookRepository;
 
 import java.nio.charset.Charset;
@@ -53,7 +52,7 @@ public class UpdateBookControllerTest {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setYear(2000);
         bookRequestDTO.setPhotoUrl("url");
         bookRequestDTO.setDescription("desc");
@@ -107,7 +106,7 @@ public class UpdateBookControllerTest {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
         bookRequestDTO.setRecommended(false);
@@ -151,7 +150,7 @@ public class UpdateBookControllerTest {
     public void noTitleFailedTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
         bookRequestDTO.setRecommended(false);
@@ -170,7 +169,7 @@ public class UpdateBookControllerTest {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setRecommended(false);
 
@@ -188,7 +187,7 @@ public class UpdateBookControllerTest {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(-20.3464f);
         bookRequestDTO.setRecommended(false);
@@ -207,7 +206,7 @@ public class UpdateBookControllerTest {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(7L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(7);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
         bookRequestDTO.setRecommended(false);
@@ -226,7 +225,7 @@ public class UpdateBookControllerTest {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setYear(2000);
         bookRequestDTO.setPhotoUrl("url");
         bookRequestDTO.setDescription("desc");
@@ -247,7 +246,7 @@ public class UpdateBookControllerTest {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(7L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(7);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
 

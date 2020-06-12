@@ -14,7 +14,7 @@ public class ValidationService {
     public void validate(BookRequestDTO bookRequestDTO) throws CustomException {
         validateNotNull(FieldName.TITLE, bookRequestDTO.getTitle());
         validateNotNull(FieldName.AUTHOR, bookRequestDTO.getAuthor());
-        validateNotNull(FieldName.CATEGORY, bookRequestDTO.getCategory());
+        validateNotNull(FieldName.CATEGORY, bookRequestDTO.getCategoryId());
         validateNotNull(FieldName.PRICE, bookRequestDTO.getPrice());
         validateNotNull(FieldName.AVAILABLE, bookRequestDTO.getAvailable());
         validateNotNull(FieldName.RECOMMENDED, bookRequestDTO.getRecommended());

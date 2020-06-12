@@ -1,6 +1,6 @@
 package pl.agh.product.catalog.application.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.agh.product.catalog.application.dto.BookRequestDTO;
 import pl.agh.product.catalog.common.exception.BadRequestException;
@@ -14,35 +14,26 @@ import pl.agh.product.catalog.mysql.repository.BookRepository;
 import pl.agh.product.catalog.mysql.repository.CategoryRepository;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class BookService {
 
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
-
-    @Autowired
-    public BookService(BookRepository bookRepository, CategoryRepository categoryRepository) {
-        this.bookRepository = bookRepository;
-        this.categoryRepository = categoryRepository;
-    }
 
     public Book find(Long id) {
         return bookRepository.findById(id).orElse(null);
     }
 
     public Book add(BookRequestDTO bookRequestDTO) throws CustomException {
-        if (!categoryRepository.existsById(bookRequestDTO.getCategory().getId())) {
+        var category = categoryRepository.findById(Long.valueOf(bookRequestDTO.getCategoryId()));
+        if (category.isEmpty()) {
             throw new BadRequestException("category not found");
         }
-        Book book = bookRequestDTO.toEntity();
+        Book book = bookRequestDTO.toEntity(category.get());
         book.setDateAdded(LocalDate.now());
         return bookRepository.save(book);
     }
@@ -52,11 +43,12 @@ public class BookService {
         if (!optBook.isPresent()) {
             return null;
         }
-        if (!categoryRepository.existsById(bookRequestDTO.getCategory().getId())) {
+        var category = categoryRepository.findById(Long.valueOf(bookRequestDTO.getCategoryId()));
+        if (category.isEmpty()) {
             throw new BadRequestException("category not found");
         }
         Book existingBook = optBook.get();
-        Book book = bookRequestDTO.toEntity();
+        Book book = bookRequestDTO.toEntity(category.get());
         book.setId(id);
         book.setDateAdded(existingBook.getDateAdded());
         book = bookRepository.save(book);
@@ -65,7 +57,7 @@ public class BookService {
 
     public Book delete(Long id) {
         Optional<Book> book = bookRepository.findById(id);
-        if (!book.isPresent()) {
+        if (book.isEmpty()) {
             return null;
         }
         bookRepository.delete(book.get());
@@ -74,7 +66,7 @@ public class BookService {
 
     public Book updateBookPhotoUrl(Long id, String photoUrl) {
         Optional<Book> optBook = bookRepository.findById(id);
-        if (!optBook.isPresent()) {
+        if (optBook.isEmpty()) {
             return null;
         }
         Book book = optBook.get();

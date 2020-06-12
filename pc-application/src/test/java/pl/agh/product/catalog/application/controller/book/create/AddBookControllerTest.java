@@ -15,10 +15,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pl.agh.product.catalog.application.dto.BookRequestDTO;
 import pl.agh.product.catalog.mysql.entity.Book;
-import pl.agh.product.catalog.mysql.entity.Category;
 import pl.agh.product.catalog.mysql.repository.BookRepository;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
 import static junit.framework.TestCase.assertTrue;
@@ -45,7 +44,7 @@ public class AddBookControllerTest {
     private ObjectMapper objectMapper;
 
     private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
-            MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+            MediaType.APPLICATION_JSON.getSubtype(), StandardCharsets.UTF_8);
 
     @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
@@ -53,7 +52,7 @@ public class AddBookControllerTest {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setYear(2000);
         bookRequestDTO.setPhotoUrl("url");
         bookRequestDTO.setDescription("desc");
@@ -72,7 +71,7 @@ public class AddBookControllerTest {
                 .andExpect(jsonPath("title").value("A"))
                 .andExpect(jsonPath("author").value("A"))
                 .andExpect(jsonPath("category.id").value("1"))
-                .andExpect(jsonPath("category.name").value("someName"))
+                .andExpect(jsonPath("category.name").value("Novel"))
                 .andExpect(jsonPath("year").value("2000"))
                 .andExpect(jsonPath("photoUrl").value("url"))
                 .andExpect(jsonPath("description").value("desc"))
@@ -111,7 +110,7 @@ public class AddBookControllerTest {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setRecommended(true);
         bookRequestDTO.setPrice(20.3464f);
@@ -125,7 +124,7 @@ public class AddBookControllerTest {
                 .andExpect(jsonPath("title").value("A"))
                 .andExpect(jsonPath("author").value("A"))
                 .andExpect(jsonPath("category.id").value("1"))
-                .andExpect(jsonPath("category.name").value("someName"))
+                .andExpect(jsonPath("category.name").value("Novel"))
                 .andExpect(jsonPath("year").value(nullValue()))
                 .andExpect(jsonPath("photoUrl").value(nullValue()))
                 .andExpect(jsonPath("description").value(nullValue()))
@@ -161,7 +160,7 @@ public class AddBookControllerTest {
     public void noTitleFailedTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
         bookRequestDTO.setRecommended(false);
@@ -180,7 +179,7 @@ public class AddBookControllerTest {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setRecommended(false);
 
@@ -198,7 +197,7 @@ public class AddBookControllerTest {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(-20.3464f);
         bookRequestDTO.setRecommended(false);
@@ -217,7 +216,7 @@ public class AddBookControllerTest {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(7L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(7);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
         bookRequestDTO.setRecommended(false);
@@ -236,7 +235,7 @@ public class AddBookControllerTest {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(7L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(7);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
 

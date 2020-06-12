@@ -15,10 +15,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pl.agh.product.catalog.application.dto.BookRequestDTO;
 import pl.agh.product.catalog.mysql.entity.Book;
-import pl.agh.product.catalog.mysql.entity.Category;
 import pl.agh.product.catalog.mysql.repository.BookRepository;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -43,7 +42,7 @@ public class DeleteBookControllerTest {
     private ObjectMapper objectMapper;
 
     private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
-            MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+            MediaType.APPLICATION_JSON.getSubtype(), StandardCharsets.UTF_8);
 
     @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
@@ -51,7 +50,7 @@ public class DeleteBookControllerTest {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
         bookRequestDTO.setRecommended(true);
