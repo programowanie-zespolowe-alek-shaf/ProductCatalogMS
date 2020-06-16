@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public class BookRequestDTO {
     private String title;
     private String author;
-    private Category category;
+    private Integer categoryId;
     private Integer year;
     private String photoUrl;
     private String description;
@@ -22,7 +22,7 @@ public class BookRequestDTO {
     private Integer numPages;
     private Book.CoverType coverType = Book.CoverType.PAPERBACK;
 
-    public Book toEntity() {
+    public Book toEntity(Category category) {
         return Book.builder()
                 .title(title)
                 .author(author)

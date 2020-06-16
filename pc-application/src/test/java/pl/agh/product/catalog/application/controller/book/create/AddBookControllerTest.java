@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -14,21 +14,16 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pl.agh.product.catalog.application.dto.BookRequestDTO;
 import pl.agh.product.catalog.mysql.entity.Book;
-import pl.agh.product.catalog.mysql.entity.Category;
 import pl.agh.product.catalog.mysql.repository.BookRepository;
 
-import java.nio.charset.Charset;
 import java.time.LocalDate;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static pl.agh.product.catalog.application.config.TestUtils.getIdFromResponse;
-import static pl.agh.product.catalog.application.config.TestUtils.mapObjectToStringJson;
+import static pl.agh.product.catalog.application.config.TestUtils.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest()
@@ -45,15 +40,13 @@ public class AddBookControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
-            MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
-
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void successAllArgsTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setYear(2000);
         bookRequestDTO.setPhotoUrl("url");
         bookRequestDTO.setDescription("desc");
@@ -72,7 +65,7 @@ public class AddBookControllerTest {
                 .andExpect(jsonPath("title").value("A"))
                 .andExpect(jsonPath("author").value("A"))
                 .andExpect(jsonPath("category.id").value("1"))
-                .andExpect(jsonPath("category.name").value("someName"))
+                .andExpect(jsonPath("category.name").value("Novel"))
                 .andExpect(jsonPath("year").value("2000"))
                 .andExpect(jsonPath("photoUrl").value("url"))
                 .andExpect(jsonPath("description").value("desc"))
@@ -105,12 +98,13 @@ public class AddBookControllerTest {
         bookRepository.delete(book);
     }
 
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void successMinArgsTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setRecommended(true);
         bookRequestDTO.setPrice(20.3464f);
@@ -124,7 +118,7 @@ public class AddBookControllerTest {
                 .andExpect(jsonPath("title").value("A"))
                 .andExpect(jsonPath("author").value("A"))
                 .andExpect(jsonPath("category.id").value("1"))
-                .andExpect(jsonPath("category.name").value("someName"))
+                .andExpect(jsonPath("category.name").value("Novel"))
                 .andExpect(jsonPath("year").value(nullValue()))
                 .andExpect(jsonPath("photoUrl").value(nullValue()))
                 .andExpect(jsonPath("description").value(nullValue()))
@@ -155,12 +149,12 @@ public class AddBookControllerTest {
         bookRepository.delete(book);
     }
 
-
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void noTitleFailedTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
         bookRequestDTO.setRecommended(false);
@@ -173,12 +167,13 @@ public class AddBookControllerTest {
                 .andExpect(jsonPath("error").value("title cannot be null"));
     }
 
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void noPriceFailedTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setRecommended(false);
 
@@ -190,12 +185,13 @@ public class AddBookControllerTest {
                 .andExpect(jsonPath("error").value("price cannot be null"));
     }
 
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void priceBelowZeroFailedTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(1L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(1);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(-20.3464f);
         bookRequestDTO.setRecommended(false);
@@ -208,12 +204,13 @@ public class AddBookControllerTest {
                 .andExpect(jsonPath("error").value("price must be greater than zero"));
     }
 
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void categoryDoesNotExistFailedTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(7L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(7);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
         bookRequestDTO.setRecommended(false);
@@ -226,12 +223,13 @@ public class AddBookControllerTest {
                 .andExpect(jsonPath("error").value("category not found"));
     }
 
+    @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void recommendedNotProvidedFailedTest() throws Exception {
         BookRequestDTO bookRequestDTO = new BookRequestDTO();
         bookRequestDTO.setTitle("A");
         bookRequestDTO.setAuthor("A");
-        bookRequestDTO.setCategory(new Category(7L, "someName")); //only id is important
+        bookRequestDTO.setCategoryId(7);
         bookRequestDTO.setAvailable(true);
         bookRequestDTO.setPrice(20.3464f);
 
