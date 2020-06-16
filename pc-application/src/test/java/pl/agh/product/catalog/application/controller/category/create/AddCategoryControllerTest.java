@@ -1,5 +1,6 @@
 package pl.agh.product.catalog.application.controller.category.create;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import pl.agh.product.catalog.application.dto.CategoryRequestDTO;
 import pl.agh.product.catalog.mysql.entity.Category;
 import pl.agh.product.catalog.mysql.repository.CategoryRepository;
 
@@ -18,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static pl.agh.product.catalog.application.config.TestUtils.getIdFromResponse;
+import static pl.agh.product.catalog.application.config.TestUtils.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest()
@@ -32,11 +34,21 @@ public class AddCategoryControllerTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void successTest() throws Exception {
+
+        CategoryRequestDTO categoryRequestDTO = new CategoryRequestDTO();
+        categoryRequestDTO.setName("newCategory");
+
+        String requestJson = mapObjectToStringJson(categoryRequestDTO, objectMapper);
+
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("/categories")
-                .param("name", "newCategory"))
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson))
                 .andExpect(status().is(201))
                 .andExpect(jsonPath("id").isNumber())
                 .andExpect(jsonPath("name").value("newCategory"))
@@ -53,8 +65,14 @@ public class AddCategoryControllerTest {
     @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
     public void categoryAlreadyExistsFailedTest() throws Exception {
+        CategoryRequestDTO categoryRequestDTO = new CategoryRequestDTO();
+        categoryRequestDTO.setName("noveL");
+
+        String requestJson = mapObjectToStringJson(categoryRequestDTO, objectMapper);
+
         mvc.perform(MockMvcRequestBuilders.post("/categories")
-                .param("name", "noveL"))
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson))
                 .andExpect(status().is(400))
                 .andExpect(jsonPath("error").value("category already exists"));
     }
