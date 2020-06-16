@@ -43,8 +43,8 @@ public class CategoryController {
     }
 
     @GetMapping(produces = APPLICATION_JSON)
-    public ResponseEntity<?> findCategories() {
-        ListResponse categories = categoryService.findCategories();
+    public ResponseEntity<?> findCategories(@RequestParam int limit, @RequestParam int offset) {
+        ListResponse categories = categoryService.findCategories(limit, offset);
         return ResponseEntity.ok(categories);
     }
 
