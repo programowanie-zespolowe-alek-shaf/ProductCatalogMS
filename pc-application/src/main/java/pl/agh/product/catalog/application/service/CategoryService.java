@@ -28,8 +28,9 @@ public class CategoryService {
 
     public ListResponse findCategories(int limit, int offset) {
         List<Category> categories = categoryRepository.findAll();
+        int count = categories.size();
         categories = ListUtil.clampedSublist(categories, limit, offset);
-        return new ListResponse(categories, categories.size());
+        return new ListResponse(categories, count);
     }
 
     public Category find(Long id) {
