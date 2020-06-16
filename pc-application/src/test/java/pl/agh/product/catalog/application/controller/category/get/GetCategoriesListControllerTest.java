@@ -23,8 +23,25 @@ public class GetCategoriesListControllerTest {
     private MockMvc mvc;
 
     @Test
-    public void successTest() throws Exception {
+    public void noLimitAndOffsetTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/categories"))
+                .andExpect(status().is(400))
+                .andExpect(status().reason("Required int parameter 'limit' is not present"));
+    }
+
+    @Test
+    public void noOffsetTest() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/categories")
+                .param("limit", "0"))
+                .andExpect(status().is(400))
+                .andExpect(status().reason("Required int parameter 'offset' is not present"));
+    }
+
+    @Test
+    public void successTest() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/categories")
+                .param("offset", "0")
+                .param("limit", "10"))
                 .andExpect(status().is(200))
                 .andExpect(jsonPath("list[0].id").value("1"))
                 .andExpect(jsonPath("list[0].name").value("Novel"))

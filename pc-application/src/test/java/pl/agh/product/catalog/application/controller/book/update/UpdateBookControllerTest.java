@@ -6,7 +6,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -16,7 +15,6 @@ import pl.agh.product.catalog.application.dto.BookRequestDTO;
 import pl.agh.product.catalog.mysql.entity.Book;
 import pl.agh.product.catalog.mysql.repository.BookRepository;
 
-import java.nio.charset.Charset;
 import java.time.LocalDate;
 
 import static junit.framework.TestCase.assertTrue;
@@ -24,6 +22,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static pl.agh.product.catalog.application.config.TestUtils.APPLICATION_JSON_UTF8;
 import static pl.agh.product.catalog.application.config.TestUtils.mapObjectToStringJson;
 
 @RunWith(SpringRunner.class)
@@ -40,9 +39,6 @@ public class UpdateBookControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    private static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
-            MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
     @WithMockUser(username = "john", roles = {"ADMIN"})
     @Test
