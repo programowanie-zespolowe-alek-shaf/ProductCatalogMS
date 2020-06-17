@@ -29,7 +29,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterAfter(new JwtTokenAuthenticationFilter(jwtConfig), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
+                .antMatchers("/monitoring**").permitAll()
+                .antMatchers("/actuator/**").hasRole("ADMIN")
                 .anyRequest().authenticated();
+
     }
 
     @Override
