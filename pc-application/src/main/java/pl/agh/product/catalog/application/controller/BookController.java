@@ -2,12 +2,8 @@ package pl.agh.product.catalog.application.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.agh.product.catalog.application.dto.BookRequestDTO;
 import pl.agh.product.catalog.application.service.BookService;
@@ -37,6 +33,7 @@ public class BookController {
         this.validationService = validationService;
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(method = RequestMethod.POST, produces = {APPLICATION_JSON})
     public ResponseEntity addBook(@RequestBody BookRequestDTO bookRequestDTO) throws CustomException {
         validationService.validate(bookRequestDTO);
@@ -64,6 +61,7 @@ public class BookController {
         }
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = "{id}", method = RequestMethod.PUT, produces = {APPLICATION_JSON})
     public ResponseEntity updateBook(@PathVariable("id") Long id, @RequestBody BookRequestDTO bookRequestDTO) throws CustomException {
         validationService.validate(bookRequestDTO);
@@ -75,6 +73,7 @@ public class BookController {
         }
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE, produces = {APPLICATION_JSON})
     public ResponseEntity deleteBook(@PathVariable Long id) {
         Book deletedBook = bookService.delete(id);
@@ -89,11 +88,14 @@ public class BookController {
     public ResponseEntity findBooks(@RequestParam int limit,
                                     @RequestParam int offset,
                                     @RequestParam(required = false) Category category,
+                                    @RequestParam(required = false) Boolean recommended,
+                                    @RequestParam(required = false) String sort,
                                     @RequestParam(required = false) String... phrases) {
-        ListResponse books = bookService.findBooks(limit, offset, category, phrases);
+        ListResponse books = bookService.findBooks(limit, offset, category, recommended, sort, phrases);
         return ResponseEntity.ok(books);
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = "{id}", method = RequestMethod.PATCH, produces = {APPLICATION_JSON})
     public ResponseEntity updateBookImageUrl(@PathVariable("id") Long id, @RequestParam String photoUrl) {
         Book book = bookService.updateBookPhotoUrl(id, photoUrl);

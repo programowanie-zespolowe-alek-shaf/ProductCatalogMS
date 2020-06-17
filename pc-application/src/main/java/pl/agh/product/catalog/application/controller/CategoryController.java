@@ -1,38 +1,34 @@
 package pl.agh.product.catalog.application.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import pl.agh.product.catalog.application.dto.CategoryRequestDTO;
 import pl.agh.product.catalog.application.service.CategoryService;
 import pl.agh.product.catalog.common.exception.CustomException;
 import pl.agh.product.catalog.common.response.ListResponse;
 import pl.agh.product.catalog.mysql.entity.Category;
 
+import javax.validation.Valid;
 import java.net.URI;
 
 import static pl.agh.product.catalog.common.util.ResponseFormat.APPLICATION_JSON;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = CategoryController.PREFIX)
 public class CategoryController {
 
-    final static String PREFIX = "/categories";
+    static final String PREFIX = "/categories";
 
     private final CategoryService categoryService;
 
-    @Autowired
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
-
-    @RequestMapping(method = RequestMethod.POST, produces = {APPLICATION_JSON})
-    public ResponseEntity addCategory(@RequestParam String name) throws CustomException {
-        Category createdCategory = categoryService.add(name);
+    @Secured("ROLE_ADMIN")
+    @PostMapping(consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
+    public ResponseEntity<?> addCategory(@RequestBody @Valid CategoryRequestDTO categoryRequestDTO) throws CustomException {
+        Category createdCategory = categoryService.add(categoryRequestDTO.getName());
         if (createdCategory == null) {
             return ResponseEntity.notFound().build();
         } else {
@@ -46,13 +42,13 @@ public class CategoryController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = {APPLICATION_JSON})
-    public ResponseEntity findCategories() {
-        ListResponse categories = categoryService.findCategories();
+    @GetMapping(produces = APPLICATION_JSON)
+    public ResponseEntity<?> findCategories(@RequestParam int limit, @RequestParam int offset) {
+        ListResponse categories = categoryService.findCategories(limit, offset);
         return ResponseEntity.ok(categories);
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.GET, produces = {APPLICATION_JSON})
+    @GetMapping(value = "{id}", produces = APPLICATION_JSON)
     public ResponseEntity<Category> getCategory(@PathVariable("id") Long id) {
         Category category = categoryService.find(id);
         if (category == null) {
@@ -62,8 +58,9 @@ public class CategoryController {
         }
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE, produces = {APPLICATION_JSON})
-    public ResponseEntity deleteCategory(@PathVariable Long id) {
+    @Secured("ROLE_ADMIN")
+    @DeleteMapping(value = "{id}", produces = APPLICATION_JSON)
+    public ResponseEntity<?> deleteCategory(@PathVariable Long id) {
         Category deletedCategory = categoryService.delete(id);
         if (deletedCategory == null) {
             return ResponseEntity.notFound().build();

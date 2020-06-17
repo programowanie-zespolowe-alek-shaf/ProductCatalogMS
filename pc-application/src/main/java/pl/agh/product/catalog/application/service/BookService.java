@@ -1,6 +1,8 @@
 package pl.agh.product.catalog.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.agh.product.catalog.application.dto.BookRequestDTO;
 import pl.agh.product.catalog.common.exception.BadRequestException;
@@ -13,54 +15,51 @@ import pl.agh.product.catalog.mysql.entity.Category;
 import pl.agh.product.catalog.mysql.repository.BookRepository;
 import pl.agh.product.catalog.mysql.repository.CategoryRepository;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class BookService {
 
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
-
-    @Autowired
-    public BookService(BookRepository bookRepository, CategoryRepository categoryRepository) {
-        this.bookRepository = bookRepository;
-        this.categoryRepository = categoryRepository;
-    }
 
     public Book find(Long id) {
         return bookRepository.findById(id).orElse(null);
     }
 
     public Book add(BookRequestDTO bookRequestDTO) throws CustomException {
-        if (!categoryRepository.existsById(bookRequestDTO.getCategory().getId())) {
+        var category = categoryRepository.findById(Long.valueOf(bookRequestDTO.getCategoryId()));
+        if (category.isEmpty()) {
             throw new BadRequestException("category not found");
         }
-        Book book = bookRequestDTO.toEntity();
+        Book book = bookRequestDTO.toEntity(category.get());
+        book.setDateAdded(LocalDate.now());
         return bookRepository.save(book);
     }
 
     public Book update(Long id, BookRequestDTO bookRequestDTO) throws BadRequestException {
-        if (!bookRepository.existsById(id)) {
+        Optional<Book> optBook = bookRepository.findById(id);
+        if (!optBook.isPresent()) {
             return null;
         }
-        if (!categoryRepository.existsById(bookRequestDTO.getCategory().getId())) {
+        var category = categoryRepository.findById(Long.valueOf(bookRequestDTO.getCategoryId()));
+        if (category.isEmpty()) {
             throw new BadRequestException("category not found");
         }
-        Book book = bookRequestDTO.toEntity();
+        Book existingBook = optBook.get();
+        Book book = bookRequestDTO.toEntity(category.get());
         book.setId(id);
+        book.setDateAdded(existingBook.getDateAdded());
         book = bookRepository.save(book);
         return book;
     }
 
     public Book delete(Long id) {
         Optional<Book> book = bookRepository.findById(id);
-        if (!book.isPresent()) {
+        if (book.isEmpty()) {
             return null;
         }
         bookRepository.delete(book.get());
@@ -69,7 +68,7 @@ public class BookService {
 
     public Book updateBookPhotoUrl(Long id, String photoUrl) {
         Optional<Book> optBook = bookRepository.findById(id);
-        if (!optBook.isPresent()) {
+        if (optBook.isEmpty()) {
             return null;
         }
         Book book = optBook.get();
@@ -78,12 +77,23 @@ public class BookService {
         return book;
     }
 
-    public ListResponse findBooks(int limit, int offset, Category category, String... phrases) {
+    public ListResponse findBooks(int limit, int offset, Category category, Boolean recommended, String sort, String... phrases) {
         List<Book> books;
         if (phrases != null && phrases.length > 0) {
             books = findBooksByPhrases(phrases);
         } else {
-            books = bookRepository.findAll();
+            if (sort != null) {
+                String[] sort_key_and_direction = sort.split(";");
+                Sort sort_obj = null;
+                if (sort_key_and_direction.length == 2 && sort_key_and_direction[1].equals("desc")) {
+                    sort_obj = Sort.by(Sort.Direction.DESC, sort_key_and_direction[0]);
+                } else {
+                    sort_obj = Sort.by(Sort.Direction.ASC, sort_key_and_direction[0]);
+                }
+                books = (List<Book>)bookRepository.findAll(sort_obj);
+            } else {
+                books = bookRepository.findAll();
+            }
         }
 
         if (category != null) {
@@ -91,6 +101,12 @@ public class BookService {
                     .filter(b -> category.getId().equals(b.getCategory().getId()))
                     .collect(Collectors.toList());
         }
+        if (recommended != null) {
+            books = books.stream()
+                    .filter(b -> b.getRecommended().equals(recommended))
+                    .collect(Collectors.toList());
+        }
+
         int count = books.size();
         books = ListUtil.clampedSublist(books, limit, offset);
         return new ListResponse(books, count);
